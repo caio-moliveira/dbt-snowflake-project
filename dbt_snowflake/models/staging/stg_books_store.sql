@@ -1,16 +1,10 @@
 WITH raw_data AS (
     SELECT
         source,
-        data
-    FROM {{ source('raw', 'books') }}
-    WHERE source = 'bookstore'
-),
-flattened AS (
-    SELECT
-        source,
-        data:Title::STRING AS title,
-        data:Star Rating::STRING AS star_rating,
+        data:Title::STRING AS title,  -- Ensure `data` is a valid JSON column
+        data:Author::STRING AS author,
         data:Price::FLOAT AS price
-    FROM raw_data
+    FROM {{ source('raw', 'books') }}
 )
-SELECT * FROM flattened;
+SELECT *
+FROM raw_data;
