@@ -2,7 +2,7 @@ WITH raw_data AS (
     SELECT
         source,
         data
-    FROM {{ ref('RAW.books') }}
+    FROM {{ source('raw', 'books') }}
     WHERE source = 'google_books'
 ),
 flattened AS (

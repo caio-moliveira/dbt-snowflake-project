@@ -1,9 +1,9 @@
 # Name your project! Ensure it's lowercase and reflects the project's purpose.
-name: 'dbt_snowflake'  # Changed to a unique project name to avoid conflicts.
+name: 'my_books_project'  # Changed to a unique project name to avoid conflicts.
 version: '1.0.0'
 
 # Specify which dbt profile to use. This should match the profile in your `profiles.yml`.
-profile: 'dbt_project'
+profile: 'dbt_snowflake'
 
 # File path configurations for dbt resources.
 model-paths: ["models"]
@@ -20,14 +20,30 @@ clean-targets:
 
 # Configure seeds (CSV files loaded into the database).
 seeds:
-  +schema: raw  # Seeds will be loaded into the RAW schema.
-  +name: seed    # Ensures the table is named SEED in the RAW schema.
-  snowflake_warehouse: dbt_wh
+  +schema: raw
+  amazon_books:
+    +column_types:
+      title: string
+      rank: integer
+      reviews: float
+      review_count: integer
+      price: float
+      genre: string
+      manufacturer: string
+      brand: string
+      author: string
+      number_of_pages: integer
+
+
+
 
 
 # Configure models (dbt SQL files).
 models:
+  my_books_project:  # Reflect the updated project name here.
     # Staging models (incremental by default, stored in the `staging` schema).
+
+
     staging:
       +materialized: incremental
       +schema: staging
@@ -41,5 +57,6 @@ models:
 
 # Optional configurations for snapshots (if used).
 snapshots:
+  my_books_project:  # Reflect the updated project name here.
     +schema: snapshots
     snowflake_warehouse: dbt_wh

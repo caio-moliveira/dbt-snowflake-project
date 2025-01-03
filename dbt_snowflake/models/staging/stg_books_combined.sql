@@ -8,22 +8,20 @@ WITH mercadolivre AS (
         data:Price::FLOAT AS price,
         data:Publisher::STRING AS publisher,
         data:Language::STRING AS language
-    FROM DBT_PROJECT.RAW.BOOKS
-    WHERE source = 'mercado_livre'
+    FROM {{ ref('stg_mercadolivre_books') }}
 ),
 google_books AS (
     SELECT
         'google_books' AS source,
         data:Title::STRING AS title,
-        data:Authors[0]::STRING AS author, -- First author in the array
+        data:Authors[0]::STRING AS author,
         data:Description::STRING AS description,
         data:AverageRating::FLOAT AS average_rating,
         data:RatingsCount::INT AS ratings_count,
         data:PublishedDate::STRING AS published_date,
-        data:Categories[0]::STRING AS category, -- First category in the array
+        data:Categories[0]::STRING AS category,
         data:Language::STRING AS language
-    FROM DBT_PROJECT.RAW.BOOKS
-    WHERE source = 'google_books'
+    FROM {{ ref('stg_google_books') }}
 ),
 books AS (
     SELECT
@@ -36,8 +34,7 @@ books AS (
         NULL AS publisher,
         NULL AS language,
         data:StarRating::STRING AS star_rating
-    FROM DBT_PROJECT.RAW.BOOKS
-    WHERE source = 'bookstore'
+    FROM {{ ref('stg_books_store') }}
 ),
 amazon_books AS (
     SELECT

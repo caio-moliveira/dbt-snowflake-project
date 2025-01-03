@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: raw
+    database: DBT_PROJECT
+    schema: RAW
+    description: "Schema containing raw book data loaded from various sources."
+    tables:
+      - name: books
+        description: "Table storing raw book data with a 'source' column and JSON-structured 'data' column."
+        loader: "Snowflake COPY command from S3"
+        columns:
+          - name: source
+            description: "The source of the book data (e.g., Mercado Livre, Google Books, Bookstore)."
+          - name: data
+            description: "The raw JSON data stored in a VARIANT column."

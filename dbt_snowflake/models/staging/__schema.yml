@@ -63,22 +63,24 @@ models:
         description: "Title of the book."
         tests:
           - not_null
-      - name: author
-        description: "Author of the book."
       - name: rank
         description: "Amazon rank of the book."
-      - name: average_rating
+      - name: reviews
         description: "Average review rating (out of 5)."
       - name: review_count
-        description: "Total number of reviews for the book."
+        description: "Total number of reviews."
       - name: price
         description: "Price of the book in USD."
-      - name: category
+      - name: genre
         description: "Genre or category of the book."
-      - name: publisher
-        description: "Publisher or manufacturer of the book."
+      - name: manufacturer
+        description: "Publisher or manufacturer."
+      - name: brand
+        description: "Brand associated with the book, if any."
+      - name: author
+        description: "Author of the book."
       - name: number_of_pages
-        description: "Number of pages in the book."
+        description: "Number of pages."
 
   - name: stg_books_combined
     description: "Combined staging model that merges data from Mercado Livre, Google Books, and Amazon seed data."
