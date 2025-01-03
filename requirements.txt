@@ -1,0 +1,11 @@
+beautifulsoup4
+dbt-snowflake
+loguru
+pandas
+pre-commit
+psycopg2
+python-dotenv
+requests
+sqlalchemy
+sqlfluff
+streamlit
