@@ -1,16 +1,11 @@
-
-# Name your project! Project names should contain only lowercase characters
-# and underscores. A good package name should reflect your organization's
-# name or the intended use of these models
-name: 'dbt_snowflake'
+# Name your project! Ensure it's lowercase and reflects the project's purpose.
+name: 'dbt_snowflake'  # Changed to a unique project name to avoid conflicts.
 version: '1.0.0'
 
-# This setting configures which "profile" dbt uses for this project.
-profile: 'dbt_snowflake'
+# Specify which dbt profile to use. This should match the profile in your `profiles.yml`.
+profile: 'dbt_project'
 
-# These configurations specify where dbt should look for different types of files.
-# The `model-paths` config, for example, states that models in this project can be
-# found in the "models/" directory. You probably won't need to change these!
+# File path configurations for dbt resources.
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
@@ -18,19 +13,33 @@ seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
-clean-targets:         # directories to be removed by `dbt clean`
+# Clean targets configuration: These directories will be removed by `dbt clean`.
+clean-targets:
   - "target"
   - "dbt_packages"
 
+# Configure seeds (CSV files loaded into the database).
+seeds:
+  +schema: raw  # Seeds will be loaded into the RAW schema.
+  +name: seed    # Ensures the table is named SEED in the RAW schema.
+  snowflake_warehouse: dbt_wh
 
-# Configuring models
-# Full documentation: https://docs.getdbt.com/docs/configuring-models
 
-# In this example config, we tell dbt to build all models in the example/
-# directory as views. These settings can be overridden in the individual model
-# files using the `{{ config(...) }}` macro.
+# Configure models (dbt SQL files).
 models:
-  dbt_snowflake:
-    # Config indicated by + and applies to all files under models/example/
-    example:
-      +materialized: view
+    # Staging models (incremental by default, stored in the `staging` schema).
+    staging:
+      +materialized: incremental
+      +schema: staging
+      snowflake_warehouse: dbt_wh
+    
+    # Mart models (analytics-ready, stored in the `marts` schema as tables).
+    marts:
+      +materialized: table
+      +schema: marts
+      snowflake_warehouse: dbt_wh
+
+# Optional configurations for snapshots (if used).
+snapshots:
+    +schema: snapshots
+    snowflake_warehouse: dbt_wh

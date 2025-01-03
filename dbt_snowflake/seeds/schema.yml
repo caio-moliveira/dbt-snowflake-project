@@ -1,0 +1,27 @@
+version: 2
+
+# Seed Data Documentation
+seeds:
+  - name: amazon_books  
+    description: "Seed table for Amazon books data, loaded from the `amazon-books.csv` file."
+    columns:
+      - name: title
+        description: "Title of the book."
+        tests:
+          - not_null
+      - name: author
+        description: "Author of the book."
+      - name: rank
+        description: "Amazon rank of the book."
+      - name: reviews
+        description: "Average review rating (out of 5)."
+      - name: review_count
+        description: "Total number of reviews for the book."
+      - name: price
+        description: "Price of the book in USD."
+      - name: genre
+        description: "Genre or category of the book."
+      - name: manufacturer
+        description: "Publisher or manufacturer of the book."
+      - name: number_of_pages
+        description: "Number of pages in the book."

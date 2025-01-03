@@ -1,0 +1,119 @@
+version: 2
+
+# Models Documentation
+models:
+  - name: stg_mercadolivre_books
+    description: "Staging model for Mercado Livre books data extracted from JSON."
+    columns:
+      - name: title
+        description: "Title of the book."
+        tests:
+          - not_null
+      - name: author
+        description: "Author of the book."
+      - name: description
+        description: "Description of the book."
+      - name: published_date
+        description: "Publication date of the book."
+      - name: price
+        description: "Price of the book."
+      - name: publisher
+        description: "Publisher of the book."
+      - name: language
+        description: "Language in which the book is published."
+
+  - name: stg_google_books
+    description: "Staging model for Google Books data extracted from JSON."
+    columns:
+      - name: title
+        description: "Title of the book."
+        tests:
+          - not_null
+      - name: author
+        description: "Primary author of the book (first in the array)."
+      - name: description
+        description: "Description of the book."
+      - name: average_rating
+        description: "Average rating of the book."
+      - name: ratings_count
+        description: "Total number of ratings for the book."
+      - name: published_date
+        description: "Publication date of the book."
+      - name: category
+        description: "Primary genre or category of the book."
+      - name: language
+        description: "Language in which the book is published."
+
+  - name: stg_books_store
+    description: "Staging model for generic books JSON data containing limited fields."
+    columns:
+      - name: title
+        description: "Title of the book."
+        tests:
+          - not_null
+      - name: star_rating
+        description: "Star rating of the book (e.g., One, Two, Three)."
+      - name: price
+        description: "Price of the book."
+
+  - name: stg_amazon_books
+    description: "Staging model for Amazon books data sourced from the `seed` table."
+    columns:
+      - name: title
+        description: "Title of the book."
+        tests:
+          - not_null
+      - name: author
+        description: "Author of the book."
+      - name: rank
+        description: "Amazon rank of the book."
+      - name: average_rating
+        description: "Average review rating (out of 5)."
+      - name: review_count
+        description: "Total number of reviews for the book."
+      - name: price
+        description: "Price of the book in USD."
+      - name: category
+        description: "Genre or category of the book."
+      - name: publisher
+        description: "Publisher or manufacturer of the book."
+      - name: number_of_pages
+        description: "Number of pages in the book."
+
+  - name: stg_books_combined
+    description: "Combined staging model that merges data from Mercado Livre, Google Books, and Amazon seed data."
+    columns:
+      - name: source
+        description: "Source of the book data (e.g., Mercado Livre, Google Books, Amazon)."
+        tests:
+          - not_null
+      - name: title
+        description: "Title of the book."
+        tests:
+          - not_null
+      - name: author
+        description: "Author of the book."
+      - name: description
+        description: "Description of the book."
+      - name: published_date
+        description: "Publication date of the book."
+      - name: price
+        description: "Price of the book in USD."
+      - name: publisher
+        description: "Publisher or manufacturer of the book."
+      - name: language
+        description: "Language in which the book is published."
+      - name: average_rating
+        description: "Average review rating (out of 5)."
+      - name: ratings_count
+        description: "Total number of ratings for the book."
+      - name: category
+        description: "Genre or category of the book."
+      - name: star_rating
+        description: "Star rating of the book."
+      - name: rank
+        description: "Amazon rank of the book."
+      - name: review_count
+        description: "Total number of reviews for the book."
+      - name: number_of_pages
+        description: "Number of pages in the book."
