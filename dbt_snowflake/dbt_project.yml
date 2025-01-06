@@ -37,22 +37,17 @@ seeds:
 
 
 
-
-# Configure models (dbt SQL files).
 models:
-  my_books_project:  # Reflect the updated project name here.
-    # Staging models (incremental by default, stored in the `staging` schema).
-
-
+  my_books_project:
     staging:
-      +materialized: incremental
-      +schema: staging
-      snowflake_warehouse: dbt_wh
+      +materialized: table
+      +schema: models_staging
+
     
     # Mart models (analytics-ready, stored in the `marts` schema as tables).
     marts:
       +materialized: table
-      +schema: marts
+      +schema: models_marts
       snowflake_warehouse: dbt_wh
 
 # Optional configurations for snapshots (if used).

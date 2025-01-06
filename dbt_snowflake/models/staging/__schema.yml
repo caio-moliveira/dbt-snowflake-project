@@ -44,6 +44,7 @@ models:
       - name: language
         description: "Language in which the book is published."
 
+models:
   - name: stg_books_store
     description: "Staging model for generic books JSON data containing limited fields."
     columns:
@@ -55,6 +56,7 @@ models:
         description: "Star rating of the book (e.g., One, Two, Three)."
       - name: price
         description: "Price of the book."
+
 
   - name: stg_amazon_books
     description: "Staging model for Amazon books data sourced from the `seed` table."

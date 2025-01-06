@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: raw
     database: DBT_PROJECT
-    schema: RAW
+    schema: MODELS_RAW
     description: "Schema containing raw book data loaded from various sources."
     tables:
       - name: books

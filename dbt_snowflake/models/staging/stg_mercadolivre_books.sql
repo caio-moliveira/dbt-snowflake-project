@@ -2,7 +2,7 @@ WITH raw_data AS (
     SELECT
         source,
         data
-    FROM {{ source('raw', 'books') }}
+    FROM {{ ref('models_raw', 'books') }}
     WHERE source = 'mercado_livre'
 ),
 flattened AS (
