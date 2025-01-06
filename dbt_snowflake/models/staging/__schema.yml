@@ -44,7 +44,6 @@ models:
       - name: language
         description: "Language in which the book is published."
 
-models:
   - name: stg_books_store
     description: "Staging model for generic books JSON data containing limited fields."
     columns:

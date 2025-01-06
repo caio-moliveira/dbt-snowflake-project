@@ -10,7 +10,7 @@ WITH amazon_books AS (
         author,
         brand,
         number_of_pages
-    FROM {{ ref('amazon_books') }}
+    FROM {{ source('source', 'amazon_books') }}
 )
-SELECT * FROM {{ ref('amazon_books') }}
+SELECT * FROM {{ source('source', 'amazon_books') }}
 

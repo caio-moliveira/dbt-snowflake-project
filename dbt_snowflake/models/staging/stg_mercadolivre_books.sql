@@ -1,20 +1,35 @@
-WITH raw_data AS (
+WITH filtered_data AS (
     SELECT
-        source,
-        data
-    FROM {{ ref('models_raw', 'books') }}
-    WHERE source = 'mercado_livre'
+        PARSE_JSON(data) AS json_data
+    FROM {{ source('source', 'books') }}
+    WHERE source = 'mercado_livre_books'
 ),
-flattened AS (
-    SELECT
-        source,
-        data:title::STRING AS title,
-        data:author::STRING AS author,
-        data:description::STRING AS description,
-        data:published_date::STRING AS published_date,
-        data:price::FLOAT AS price,
-        data:publisher::STRING AS publisher,
-        data:language::STRING AS language
-    FROM raw_data
+flattened_titles AS (
+    SELECT 
+        KEY AS book_index,
+        VALUE::STRING AS title
+    FROM filtered_data,
+    LATERAL FLATTEN(INPUT => json_data:title)
+),
+flattened_prices AS (
+    SELECT 
+        KEY AS book_index,
+        TRY_CAST(VALUE::STRING AS FLOAT) AS price
+    FROM filtered_data,
+    LATERAL FLATTEN(INPUT => json_data:price)
+),
+flattened_authors AS (
+    SELECT 
+        KEY AS book_index,
+        VALUE::STRING AS author
+    FROM filtered_data,
+    LATERAL FLATTEN(INPUT => json_data:author)
 )
-SELECT * FROM flattened;
+SELECT 
+    titles.title,
+    prices.price,
+    authors.author
+FROM 
+    flattened_titles AS titles
+    LEFT JOIN flattened_prices AS prices ON titles.book_index = prices.book_index
+    LEFT JOIN flattened_authors AS authors ON titles.book_index = authors.book_index

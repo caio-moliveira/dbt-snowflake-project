@@ -1,7 +1,8 @@
  WITH parsed_data AS (
      SELECT
          PARSE_JSON(data) AS json_data
-     FROM {{ source('raw', 'books') }}
+     FROM {{ source('source', 'books') }}
+     WHERE source = 'bookstore'
  ),
  flattened_titles AS (
      SELECT
@@ -31,4 +32,4 @@
  FROM
      flattened_titles AS titles
      JOIN flattened_ratings AS ratings ON titles.book_index = ratings.book_index
-     JOIN flattened_prices AS prices ON titles.book_index = prices.book_index;
+     JOIN flattened_prices AS prices ON titles.book_index = prices.book_index

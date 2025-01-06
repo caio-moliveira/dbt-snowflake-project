@@ -36,19 +36,16 @@ seeds:
 
 
 
-
 models:
   my_books_project:
+    raw:
+      +schema: raw
     staging:
       +materialized: table
-      +schema: models_staging
-
-    
-    # Mart models (analytics-ready, stored in the `marts` schema as tables).
+      +schema: staging
     marts:
       +materialized: table
-      +schema: models_marts
-      snowflake_warehouse: dbt_wh
+      +schema: marts
 
 # Optional configurations for snapshots (if used).
 snapshots:
