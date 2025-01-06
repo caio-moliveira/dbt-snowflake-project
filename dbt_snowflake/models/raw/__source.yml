@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: external_stage
+    schema: EXTERNAL_STAGES
+    description: "External stage containing raw CSV files from S3 bucket"
+    tables:
+      - name: my_s3_stage
+        description: "Stage containing raw CSV files"
