@@ -1,6 +1,6 @@
 {{ config(
     materialized='incremental',
-    unique_key='ISBN'
+    unique_key='goodreads_id'
 ) }}
 
 WITH source AS (
@@ -9,16 +9,17 @@ WITH source AS (
 ),
 
 deduplicated AS (
-    SELECT DISTINCT
-        ISBN,
-        GR_Title,
-        GR_Author,
-        GR_Rating,
-        GR_Pages,
-        current_timestamp() AS dbt_load_date
-    FROM source
-    WHERE ISBN IS NOT NULL
-)
+        SELECT
+            ROW_NUMBER() OVER (ORDER BY GR_Author ASC) AS goodreads_id,
+            ISBN,
+            GR_Title AS title,
+            GR_Author AS author,
+            GR_Rating AS rating,
+            TRY_CAST(GR_Pages AS INTEGER) AS pages,
+            current_timestamp() AS dbt_load_date,
+        FROM source
+    )
+
 
 SELECT *
 FROM deduplicated

@@ -11,4 +11,4 @@ SELECT
     staging_revenue.total_revenue AS staging_revenue,
     mart_revenue.total_revenue AS mart_revenue
 FROM staging_revenue, mart_revenue
-WHERE staging_revenue.total_revenue != mart_revenue.total_revenue;
+WHERE staging_revenue.total_revenue != mart_revenue.total_revenue

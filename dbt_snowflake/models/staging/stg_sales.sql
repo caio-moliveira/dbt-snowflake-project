@@ -1,6 +1,6 @@
 {{ config(
     materialized='incremental',
-    unique_key='ISBN'
+    unique_key='sales_id'
 ) }}
 
 WITH source AS (
@@ -9,29 +9,21 @@ WITH source AS (
 ),
 
 deduplicated AS (
-    SELECT DISTINCT
-        ISBN,
-        Sales_Year::INTEGER AS Year,
-        Position::INTEGER AS Rank_Position,
-        Volume::FLOAT AS Sales_Volume,
-        Value::FLOAT AS Sales_Value,
-        RRP::FLOAT AS Recommended_Retail_Price,
-        ASP::FLOAT AS Average_Selling_Price,
-        current_timestamp() AS dbt_load_date
-    FROM source
-    WHERE ISBN IS NOT NULL
-),
-
-validated AS (
-    SELECT *
-    FROM deduplicated
-    WHERE Year BETWEEN 1900 AND EXTRACT(YEAR FROM CURRENT_DATE)
-      AND Sales_Volume >= 0
-      AND Sales_Value >= 0
-)
+        SELECT
+            ROW_NUMBER() OVER (ORDER BY Sales_Year DESC, Position ASC) AS sales_id,
+            ISBN,
+            Sales_Year::INTEGER AS sales_year,
+            Position::INTEGER AS rank_position,
+            Volume::FLOAT AS sales_volume,
+            Value::FLOAT AS sales_value,
+            RRP::FLOAT AS recommended_retail_price,
+            ASP::FLOAT AS average_sales_price,
+            current_timestamp() AS dbt_load_date,
+        FROM source
+    )
 
 SELECT *
-FROM validated
+FROM deduplicated
 {% if is_incremental() %}
-WHERE Year > (SELECT MAX(Year) FROM {{ this }})
+WHERE dbt_load_date > (SELECT MAX(dbt_load_date) FROM {{ this }})
 {% endif %}
