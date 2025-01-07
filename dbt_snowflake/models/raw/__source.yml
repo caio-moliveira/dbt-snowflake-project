@@ -5,5 +5,5 @@ sources:
     schema: EXTERNAL_STAGES
     description: "External stage containing raw CSV files from S3 bucket"
     tables:
-      - name: my_s3_stage
+      - name: s3_books_stage
         description: "Stage containing raw CSV files"

@@ -11,5 +11,5 @@ SELECT
     $6 AS Binding,
     $7 AS Publ_Date,
     $8 AS Product_Class
-FROM @DBT_PROJECT.EXTERNAL_STAGES.MY_S3_STAGE/books_table.csv
-(FILE_FORMAT => 'MY_CSV_FORMAT')
+FROM @DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage/books_table.csv
+(FILE_FORMAT => 'DBT_PROJECT.FILE_FORMATS.MY_CSV_FORMAT')
