@@ -1,15 +1,7 @@
 -- Test that total revenue matches between staging and mart layers
 WITH staging_revenue AS (
     SELECT SUM(price) AS total_revenue
-    FROM (
-        SELECT price FROM {{ ref('stg_amazon_books') }}
-        UNION ALL
-        SELECT price FROM {{ ref('stg_google_books') }}
-        UNION ALL
-        SELECT price FROM {{ ref('stg_mercadolivre_books') }}
-        UNION ALL
-        SELECT price FROM {{ ref('stg_books_store') }}
-    )
+    FROM {{ ref('stg_sales') }}
 ),
 mart_revenue AS (
     SELECT SUM(price) AS total_revenue

@@ -5,24 +5,26 @@
 
 WITH source AS (
     SELECT *
-    FROM {{ source('raw_stage', 'google_books') }}
+    FROM {{ source('raw_stage', 'books') }}
 ),
 
-cleaned AS (
+deduplicated AS (
     SELECT DISTINCT
         ISBN,
-        GB_Title AS Title,
-        GB_Author AS Author,
-        GB_Desc AS Description,
-        GB_Pages::INTEGER AS Pages,
-        GB_Genre AS Genre,
+        Title,
+        Author,
+        Imprint,
+        Publisher_Group,
+        Binding,
+        {{ parse_date('Publ_Date', 'DD/MM/YYYY') }} AS Publication_Date, -- Use the macro here
+        Product_Class,
         current_timestamp() AS dbt_load_date
     FROM source
     WHERE ISBN IS NOT NULL
 )
 
 SELECT *
-FROM cleaned
+FROM deduplicated
 {% if is_incremental() %}
 WHERE dbt_load_date > (SELECT MAX(dbt_load_date) FROM {{ this }})
 {% endif %}
