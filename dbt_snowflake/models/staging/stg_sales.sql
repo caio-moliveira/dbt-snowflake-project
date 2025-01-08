@@ -1,29 +1,14 @@
 {{ config(
-    materialized='incremental',
-    unique_key='sales_id'
+    materialized='view'
 ) }}
 
-WITH source AS (
-    SELECT *
-    FROM {{ source('raw_stage', 'sales') }}
-),
-
-deduplicated AS (
-        SELECT
-            ROW_NUMBER() OVER (ORDER BY Sales_Year DESC, Position ASC) AS sales_id,
-            ISBN,
-            Sales_Year::INTEGER AS sales_year,
-            Position::INTEGER AS rank_position,
-            Volume::FLOAT AS sales_volume,
-            Value::FLOAT AS sales_value,
-            RRP::FLOAT AS recommended_retail_price,
-            ASP::FLOAT AS average_sales_price,
-            current_timestamp() AS dbt_load_date,
-        FROM source
-    )
-
-SELECT *
-FROM deduplicated
-{% if is_incremental() %}
-WHERE dbt_load_date > (SELECT MAX(dbt_load_date) FROM {{ this }})
-{% endif %}
+SELECT
+    $1 AS ISBN,
+    $2::NUMBER(4,0) AS sales_year,
+    $3::NUMBER(10,0) AS rank_position,
+    $4::FLOAT AS sales_volume,
+    $5::FLOAT AS sales_value,
+    $6::FLOAT AS recommended_retail_price,
+    $7::FLOAT AS average_sales_price
+FROM @DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage/sales_table.csv
+(FILE_FORMAT => 'DBT_PROJECT.FILE_FORMATS.MY_CSV_FORMAT')

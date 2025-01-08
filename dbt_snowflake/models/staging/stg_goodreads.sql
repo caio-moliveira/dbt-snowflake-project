@@ -1,28 +1,12 @@
 {{ config(
-    materialized='incremental',
-    unique_key='goodreads_id'
+    materialized='view'
 ) }}
 
-WITH source AS (
-    SELECT *
-    FROM {{ source('raw_stage', 'goodreads') }}
-),
-
-deduplicated AS (
-        SELECT
-            ROW_NUMBER() OVER (ORDER BY GR_Author ASC) AS goodreads_id,
-            ISBN,
-            GR_Title AS title,
-            GR_Author AS author,
-            GR_Rating AS rating,
-            TRY_CAST(GR_Pages AS INTEGER) AS pages,
-            current_timestamp() AS dbt_load_date,
-        FROM source
-    )
-
-
-SELECT *
-FROM deduplicated
-{% if is_incremental() %}
-WHERE dbt_load_date > (SELECT MAX(dbt_load_date) FROM {{ this }})
-{% endif %}
+SELECT
+    $1 AS ISBN,
+    $2::string AS title,
+    $3::string AS author,
+    $4::float AS rating,
+    $5::integer AS pages,
+FROM @DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage/goodreads_table.csv
+(FILE_FORMAT => 'DBT_PROJECT.FILE_FORMATS.MY_CSV_FORMAT')

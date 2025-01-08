@@ -18,34 +18,31 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
-# Configure seeds (CSV files loaded into the database).
-seeds:
-  +schema: raw
-  amazon_books:
-    +column_types:
-      title: string
-      rank: integer
-      reviews: float
-      review_count: integer
-      price: float
-      genre: string
-      manufacturer: string
-      brand: string
-      author: string
-      number_of_pages: integer
-
-
 
 models:
   my_books_project:
-    raw:
-      +schema: raw
+    # Default settings for all models
+    +materialized: view
+    +schema: default
+
     staging:
-      +materialized: table
+      +materialized: view
       +schema: staging
-    mart:
+
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+
+    marts:
       +materialized: table
-      +schema: mart
+      +schema: marts  # Ensures all marts models go to the marts schema
+      dimensions:
+        +schema: marts  # Inherit from marts
+      marketing:
+        +schema: marts  # Inherit from marts
+      sales:
+        +schema: marts  # Inherit from marts
+
 
 # Optional configurations for snapshots (if used).
 snapshots:

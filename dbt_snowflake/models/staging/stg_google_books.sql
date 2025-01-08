@@ -1,28 +1,13 @@
 {{ config(
-    materialized='incremental',
-    unique_key='google_id'
+    materialized='view'
 ) }}
 
-WITH source AS (
-    SELECT *
-    FROM {{ source('raw_stage', 'google_books') }}
-),
-
-deduplicated AS (
-        SELECT
-        ROW_NUMBER() OVER (ORDER BY GB_Author ASC) AS google_id,
-        ISBN,
-        GB_Title AS title,
-        GB_Author AS author,
-        GB_Desc AS bookdescription,
-        GB_Pages::INTEGER AS pages,
-        GB_Genre AS genre,
-        current_timestamp() AS dbt_load_date,
-        FROM source
-    )
-
-SELECT *
-FROM deduplicated
-{% if is_incremental() %}
-WHERE dbt_load_date > (SELECT MAX(dbt_load_date) FROM {{ this }})
-{% endif %}
+SELECT
+    $1 AS ISBN,
+    $2::string AS title,
+    $3::string AS author,
+    $4::string AS description,
+    $5::integer AS pages,
+    $6::string AS genre
+FROM @DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage/google_books_table.csv
+(FILE_FORMAT => 'DBT_PROJECT.FILE_FORMATS.MY_CSV_FORMAT')
