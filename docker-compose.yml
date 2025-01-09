@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  dbt:
+    image: dbt-snowflake
+    build:
+      context: .
+    environment:
+      DBT_USER: "${DBT_USER}"
+      DBT_PASSWORD: "${DBT_PASSWORD}"
+      DBT_ACCOUNT: "${DBT_ACCOUNT}"
+    volumes:
+      - .:/usr/app
+    command: ["dbt", "run"]

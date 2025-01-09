@@ -9,5 +9,6 @@ SELECT
 FROM {{ ref('int_goodreads') }} goodreads
 LEFT JOIN {{ ref('int_books') }} books
     ON goodreads.ISBN = books.ISBN
+WHERE publication_year < '1970-01-01'
 GROUP BY publication_year
 ORDER BY publication_year

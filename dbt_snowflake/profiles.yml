@@ -1,0 +1,13 @@
+dbt_snowflake:
+  outputs:
+    dev:
+      account: "{{ env_var('DBT_ACCOUNT') }}" #cinckov-wu26490
+      database: dbt_project
+      password: "{{ env_var('DBT_PASSWORD') }}" #Trakinas123!
+      role: dbt_role
+      schema: dbt
+      threads: 1
+      type: snowflake
+      user: "{{ env_var('DBT_USER') }}" #DBT_USER
+      warehouse: dbt_wh
+  target: dev

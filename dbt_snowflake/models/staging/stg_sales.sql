@@ -4,8 +4,8 @@
 
 SELECT
     $1 AS ISBN,
-    $2::NUMBER(4,0) AS sales_year,
-    $3::NUMBER(10,0) AS rank_position,
+    $2::INT AS sales_year,
+    $3::INT AS rank_position,
     $4::FLOAT AS sales_volume,
     $5::FLOAT AS sales_value,
     $6::FLOAT AS recommended_retail_price,
