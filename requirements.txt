@@ -2,10 +2,7 @@ dbt-snowflake
 loguru
 pandas
 pre-commit
-psycopg2
 python-dotenv
 requests
 snowflake-connector-python
-sqlalchemy
 sqlfluff
-streamlit

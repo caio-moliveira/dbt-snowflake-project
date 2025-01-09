@@ -1,13 +1,11 @@
-version: "3.9"
 services:
-  dbt:
-    image: dbt-snowflake
+  streamlit:
     build:
-      context: .
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
     environment:
-      DBT_USER: "${DBT_USER}"
-      DBT_PASSWORD: "${DBT_PASSWORD}"
-      DBT_ACCOUNT: "${DBT_ACCOUNT}"
+      STREAMLIT_SECRETS: /app/.streamlit/secrets.toml
     volumes:
-      - .:/usr/app
-    command: ["dbt", "run"]
+      - ./app:/app

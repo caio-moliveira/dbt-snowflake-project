@@ -1,7 +1,7 @@
 # Name your project! Ensure it's lowercase and reflects the project's purpose.
 name: 'my_books_project'  # Changed to a unique project name to avoid conflicts.
 version: '1.0.0'
-
+config-version: 2
 # Specify which dbt profile to use. This should match the profile in your `profiles.yml`.
 profile: 'dbt_snowflake'
 
