@@ -4,13 +4,19 @@
 ) }}
 
 
-WITH authors AS (
+WITH distinct_authors AS (
     SELECT DISTINCT
-        ROW_NUMBER() OVER (ORDER BY author) AS author_id,
-        author AS author_name,
+        TRIM(UPPER(author)) AS author_name,
         publisher_group
     FROM {{ ref('stg_books') }}
     WHERE author IS NOT NULL
+),
+indexed_authors AS (
+    SELECT
+        ROW_NUMBER() OVER (ORDER BY author_name) AS author_id,
+        author_name,
+        publisher_group
+    FROM distinct_authors
 )
 SELECT *
-FROM authors
+FROM indexed_authors;

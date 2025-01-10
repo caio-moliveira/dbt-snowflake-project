@@ -4,13 +4,18 @@
 ) }}
 
 WITH source AS (
-    SELECT *
+        SELECT DISTINCT
+            ISBN,
+            title,
+            author,
+            rating,
+            pages
     FROM {{ ref('stg_goodreads') }}
 ),
 
 deduplicated AS (
         SELECT
-            ROW_NUMBER() OVER (PARTITION BY ISBN ORDER BY author ASC) AS goodreads_id,
+            ROW_NUMBER() OVER (ORDER BY ISBN) AS goodreads_id,
             ISBN,
             title,
             author,

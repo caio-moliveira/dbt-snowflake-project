@@ -4,13 +4,19 @@
 ) }}
 
 WITH source AS (
-    SELECT *
+    SELECT
+            ISBN,
+            title,
+            author,
+            description,
+            pages,
+            genre
     FROM {{ ref('stg_google_books') }}
 ),
 
 deduplicated AS (
         SELECT
-            ROW_NUMBER() OVER (PARTITION BY ISBN ORDER BY author ASC) AS google_id,
+            ROW_NUMBER() OVER (ORDER BY author ASC) AS google_id,
             ISBN,
             title,
             author,
