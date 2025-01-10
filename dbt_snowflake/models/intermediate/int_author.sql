@@ -19,4 +19,4 @@ indexed_authors AS (
     FROM distinct_authors
 )
 SELECT *
-FROM indexed_authors;
+FROM indexed_authors

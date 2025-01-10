@@ -7,16 +7,16 @@ import altair as alt
 def kpi_rating_trends_by_year(session):
     df = (
         session.table("RATING_TRENDS_BY_YEAR")
-        .select(col("YEAR"), col("AVERAGE_RATING"))
-        .sort(col("YEAR"))
+        .select(col("PUBLICATION_YEAR"), col("AVG_RATING"))
+        .sort(col("PUBLICATION_YEAR"))
         .to_pandas()
     )
     chart = (
         alt.Chart(df)
         .mark_line()
         .encode(
-            x=alt.X("YEAR", title="Year"),
-            y=alt.Y("AVERAGE_RATING", title="Average Rating"),
+            x=alt.X("PUBLICATION_YEAR", title="Year"),
+            y=alt.Y("AVG_RATING", title="Average Rating"),
         )
         .properties(title="Rating Trends by Year")
     )
@@ -29,8 +29,8 @@ def kpi_rating_trends_by_year(session):
 def kpi_top_rated_books(session):
     df = (
         session.table("TOP_RATED_BOOKS")
-        .select(col("TITLE"), col("AVERAGE_RATING"))
-        .sort(col("AVERAGE_RATING").desc())
+        .select(col("TITLE"), col("RATING"))
+        .sort(col("RATING").desc())
         .limit(10)
         .to_pandas()
     )
@@ -38,9 +38,9 @@ def kpi_top_rated_books(session):
         alt.Chart(df)
         .mark_bar()
         .encode(
-            x=alt.X("AVERAGE_RATING", title="Average Rating"),
+            x=alt.X("RATING", title="Average Rating"),
             y=alt.Y("TITLE", sort="-x", title="Book Title"),
-            color="AVERAGE_RATING",
+            color="RATING",
         )
         .properties(title="Top 10 Rated Books")
     )
@@ -53,8 +53,8 @@ def kpi_top_rated_books(session):
 def kpi_top_rated_genres(session):
     df = (
         session.table("TOP_RATED_GENRES")
-        .select(col("GENRE_NAME"), col("AVERAGE_RATING"))
-        .sort(col("AVERAGE_RATING").desc())
+        .select(col("GENRE"), col("AVG_RATING"))
+        .sort(col("AVG_RATING").desc())
         .limit(10)
         .to_pandas()
     )
@@ -62,9 +62,9 @@ def kpi_top_rated_genres(session):
         alt.Chart(df)
         .mark_bar()
         .encode(
-            x=alt.X("AVERAGE_RATING", title="Average Rating"),
-            y=alt.Y("GENRE_NAME", sort="-x", title="Genre"),
-            color="AVERAGE_RATING",
+            x=alt.X("AVG_RATING", title="Average Rating"),
+            y=alt.Y("GENRE", sort="-x", title="Genre"),
+            color="AVG_RATING",
         )
         .properties(title="Top 10 Rated Genres")
     )

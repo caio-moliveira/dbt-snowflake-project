@@ -19,5 +19,6 @@ WITH top_authors AS (
 
 SELECT *
 FROM top_authors
+WHERE author_name IS NOT NULL
 ORDER BY total_revenue DESC
 LIMIT 50
