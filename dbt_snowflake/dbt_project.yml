@@ -35,13 +35,11 @@ models:
 
     marts:
       +materialized: table
-      +schema: marts  # Ensures all marts models go to the marts schema
+      +schema: marts
       dimensions:
-        +schema: marts  # Inherit from marts
-      marketing:
-        +schema: marts  # Inherit from marts
+        +schema: marts
       sales:
-        +schema: marts  # Inherit from marts
+        +schema: marts
 
 
 # Optional configurations for snapshots (if used).
