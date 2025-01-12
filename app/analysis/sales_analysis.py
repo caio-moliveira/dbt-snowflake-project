@@ -77,20 +77,29 @@ def kpi_sales_by_genre(session):
 
 
 def kpi_top_selling_authors(session):
+    # Fetch the data from the session table
     df = (
         session.table("TOP_SELLING_AUTHORS")
         .select(col("AUTHOR_NAME"), col("TOTAL_BOOKS_SOLD"))
-        .sort(col("TOTAL_BOOKS_SOLD").desc())
-        .limit(10)
         .to_pandas()
     )
+
+    # Group by author and sum the total books sold
+    grouped_df = (
+        df.groupby("AUTHOR_NAME", as_index=False)["TOTAL_BOOKS_SOLD"]
+        .sum()
+        .sort_values("TOTAL_BOOKS_SOLD", ascending=False)
+        .head(10)  # Get the top 10 authors
+    )
+
+    # Create the bar chart using Altair
     chart = (
-        alt.Chart(df)
+        alt.Chart(grouped_df)
         .mark_bar()
         .encode(
             x=alt.X("TOTAL_BOOKS_SOLD", title="Total Books Sold"),
             y=alt.Y("AUTHOR_NAME", sort="-x", title="Author"),
-            color="TOTAL_BOOKS_SOLD",
+            color="TOTAL_BOOKS_SOLD:Q",
         )
         .properties(title="Top 10 Authors by Books Sold")
     )

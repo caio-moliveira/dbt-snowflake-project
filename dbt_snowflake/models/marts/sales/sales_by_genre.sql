@@ -19,3 +19,4 @@ WITH genre_sales AS (
 
 SELECT *
 FROM genre_sales
+WHERE genre IS NOT NULL
