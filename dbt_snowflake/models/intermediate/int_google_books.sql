@@ -6,12 +6,13 @@
 WITH source AS (
     SELECT
             ISBN,
-            title,
-            author,
-            description,
-            pages,
-            genre
-    FROM {{ ref('stg_google_books') }}
+            GB_Title AS title,
+            GB_Author AS author,
+            GB_Desc AS description,
+            GB_Pages AS pages,
+            GB_Genre AS genre,
+            Ingestion_Time AS ingestion_time
+    FROM {{ source('dbt_staging', 'stg_google_books') }}
 ),
 
 deduplicated AS (
@@ -23,7 +24,7 @@ deduplicated AS (
             description,
             pages,
             genre,
-            current_timestamp() AS dbt_load_date
+            ingestion_time
         FROM source
     )
 

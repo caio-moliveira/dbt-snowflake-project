@@ -6,11 +6,12 @@
 WITH source AS (
         SELECT DISTINCT
             ISBN,
-            title,
-            author,
-            rating,
-            pages
-    FROM {{ ref('stg_goodreads') }}
+            GR_Title AS title,
+            GR_Author AS author,
+            GR_Rating AS rating,
+            GR_Pages AS pages,
+            Ingestion_Time AS ingestion_time
+    FROM {{ source('dbt_staging', 'stg_goodreads') }}
 ),
 
 deduplicated AS (
@@ -21,7 +22,7 @@ deduplicated AS (
             author,
             rating,
             pages,
-            current_timestamp() AS dbt_load_date
+            ingestion_time
         FROM source
     )
 

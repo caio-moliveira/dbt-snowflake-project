@@ -8,7 +8,7 @@ WITH distinct_authors AS (
     SELECT DISTINCT
         TRIM(UPPER(author)) AS author_name,
         publisher_group
-    FROM {{ ref('stg_books') }}
+    FROM {{ source('dbt_staging', 'stg_books') }}
     WHERE author IS NOT NULL
 ),
 indexed_authors AS (
