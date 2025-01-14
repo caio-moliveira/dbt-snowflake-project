@@ -4,14 +4,18 @@
 ) }}
 
 
-SELECT DISTINCT
+WITH deduplicated_books AS (
+    SELECT DISTINCT
         ISBN,
-        Title AS title,
-        Author AS author,
-        Imprint AS imprint,
-        Publisher_Group AS publisher_group,
+        Title AS book_title,
+        Volume AS volume_sold,
         Binding AS binding,
-        Publ_Date AS publication_date,
+        Publ_Date AS publish_date,
         Product_Class AS product_class
-FROM {{ source('dbt_staging', 'stg_books') }}
-WHERE ISBN IS NOT NULL
+    FROM {{ source('dbt_staging', 'stg_raw_books') }}
+    WHERE ISBN IS NOT NULL
+)
+
+SELECT *
+FROM deduplicated_books
+ORDER BY ISBN

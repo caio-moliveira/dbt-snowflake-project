@@ -1,32 +1,20 @@
 {{ config(
     materialized='view',
-    unique_key='google_id'
+    unique_key='ISBN'
 ) }}
 
-WITH source AS (
-    SELECT
-            ISBN,
-            GB_Title AS title,
-            GB_Author AS author,
-            GB_Desc AS description,
-            GB_Pages AS pages,
-            GB_Genre AS genre,
-            Ingestion_Time AS ingestion_time
-    FROM {{ source('dbt_staging', 'stg_google_books') }}
-),
-
-deduplicated AS (
-        SELECT
-            ROW_NUMBER() OVER (ORDER BY author ASC) AS google_id,
-            ISBN,
-            title,
-            author,
-            description,
-            pages,
-            genre,
-            ingestion_time
-        FROM source
-    )
+WITH deduplicated_google_books AS (
+    SELECT DISTINCT
+        ISBN,
+        GB_Title AS gb_title,
+        GB_Author AS gb_author,
+        GB_Desc AS gb_desc,
+        GB_Pages AS gb_pages,
+        GB_Genre AS gb_genre
+    FROM {{ source('dbt_staging', 'stg_raw_books') }}
+    WHERE ISBN IS NOT NULL
+)
 
 SELECT *
-FROM deduplicated
+FROM deduplicated_google_books
+ORDER BY ISBN

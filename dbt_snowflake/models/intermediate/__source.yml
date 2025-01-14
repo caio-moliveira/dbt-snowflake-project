@@ -5,11 +5,5 @@ sources:
     schema: DBT_STAGING
     database: DBT_PROJECT
     tables:
-      - name: stg_google_books
-        description: "Raw data from the Google Books API."
-      - name: stg_goodreads
-        description: "Raw data from Goodreads."
-      - name: stg_sales
-        description: "Sales data for books."
-      - name: stg_books
+      - name: stg_raw_books
         description: "Raw metadata about books."
