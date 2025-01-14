@@ -4,8 +4,6 @@
 
 WITH author_sales AS (
     SELECT
-        authors.author_id,
-        authors.author_name,
         authors.publisher_group,
         ROUND(authors.avg_rating, 2) AS avg_rating,
         COALESCE(SUM(sales.sales_value), 0) AS total_revenue,
@@ -17,29 +15,23 @@ WITH author_sales AS (
         ON books.book_author = authors.author_name
     WHERE authors.author_name IS NOT NULL
     GROUP BY
-        authors.author_id,
-        authors.author_name,
         authors.publisher_group,
         authors.avg_rating
 ),
 ranked_authors AS (
     SELECT
-        author_id,
-        author_name,
         publisher_group,
         avg_rating,
         total_revenue,
         total_books_sold,
         ROW_NUMBER() OVER (
-            PARTITION BY author_name
+            PARTITION BY publisher_group
             ORDER BY total_revenue DESC
         ) AS rank
     FROM author_sales
 )
 
 SELECT
-    author_id,
-    author_name,
     publisher_group,
     avg_rating,
     total_revenue,

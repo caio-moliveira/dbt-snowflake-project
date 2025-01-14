@@ -1,5 +1,6 @@
 from snowflake.snowpark.functions import col
 import altair as alt
+import streamlit as st
 
 # 1. KPI: Revenue by Author
 
@@ -109,66 +110,87 @@ def kpi_top_selling_authors(session):
 # 5. KPI: Top Selling Books by Publisher
 
 
-def kpi_top_selling_books_by_publisher(session):
+def kpi_top_selling_publishers(session):
+    # Fetch the data from the session table
     df = (
-        session.table("TOP_SELLING_BOOKS_BY_PUBLISHER")
-        .select(col("TITLE"), col("TOTAL_REVENUE"))
-        .sort(col("TOTAL_REVENUE").desc())
-        .limit(10)
+        session.table("TOP_SELLING_PUBLISHERS")
+        .select(col("PUBLISHER_GROUP"), col("TOTAL_BOOKS_SOLD"))
         .to_pandas()
     )
+
+    # Group by author and sum the total books sold
+    grouped_df = (
+        df.groupby("PUBLISHER_GROUP", as_index=False)["TOTAL_BOOKS_SOLD"]
+        .sum()
+        .sort_values("TOTAL_BOOKS_SOLD", ascending=False)
+        .head(10)
+    )
+
+    # Create the bar chart using Altair
     chart = (
-        alt.Chart(df)
+        alt.Chart(grouped_df)
         .mark_bar()
         .encode(
-            x=alt.X("TOTAL_REVENUE", title="Total Revenue"),
-            y=alt.Y("TITLE", sort="-x", title="Book Title"),
-            color="TOTAL_REVENUE",
+            x=alt.X("TOTAL_BOOKS_SOLD", title="Total Books Sold"),
+            y=alt.Y("PUBLISHER_GROUP", sort="-x", title="Publisher Group"),
+            color="TOTAL_BOOKS_SOLD:Q",
         )
-        .properties(title="Top 10 Books by Revenue (Publisher)")
+        .properties(title="Top 10 Publisher Group by Books Sold")
     )
     return chart
 
 
-# 6. KPI: Top Selling Books by Year
-
-
+# 1. KPI: Top Selling Books by Year
 def kpi_top_selling_books_by_year(session):
     df = (
         session.table("TOP_SELLING_BOOKS_BY_YEAR")
         .select(col("TITLE"), col("TOTAL_REVENUE"), col("SALES_YEAR"))
-        .sort(col("SALES_YEAR").desc(), col("TOTAL_REVENUE").desc())
-        .limit(10)
         .to_pandas()
     )
+
+    if df.empty:
+        return None  # Return None if no data is available
+
+    years = df["SALES_YEAR"].unique()
+    selected_year = st.selectbox("Select a Year:", options=sorted(years, reverse=True))
+    filtered_df = (
+        df[df["SALES_YEAR"] == selected_year]
+        .sort_values(by=["TOTAL_REVENUE"], ascending=False)
+        .head(10)
+    )
+
+    if filtered_df.empty:
+        return None  # Return None if no data matches the filter
+
     chart = (
-        alt.Chart(df)
+        alt.Chart(filtered_df)
         .mark_bar()
         .encode(
             x=alt.X("TOTAL_REVENUE", title="Total Revenue"),
             y=alt.Y("TITLE", sort="-x", title="Book Title"),
-            color="SALES_YEAR:N",
+            color=alt.Color("SALES_YEAR:N", legend=None),
         )
-        .properties(title="Top 10 Books by Revenue (Yearly)")
+        .properties(title=f"Top 10 Books by Revenue for {selected_year}")
     )
     return chart
 
 
-# 7. KPI: Yearly Sales Trends
-
-
+# 2. KPI: Yearly Sales Trends
 def kpi_yearly_sales_trends(session):
     df = (
         session.table("YEARLY_SALES_TRENDS")
         .select(col("SALES_YEAR"), col("TOTAL_REVENUE"))
-        .sort(col("SALES_YEAR"))
         .to_pandas()
     )
+
+    if df.empty:
+        return None  # Return None if no data is available
+
     chart = (
         alt.Chart(df)
         .mark_line()
         .encode(
-            x=alt.X("SALES_YEAR", title="Year"),
+            x=alt.X("SALES_YEAR:O", title="Year", axis=alt.Axis(format="d")),
             y=alt.Y("TOTAL_REVENUE", title="Total Revenue"),
         )
         .properties(title="Yearly Sales Trends")

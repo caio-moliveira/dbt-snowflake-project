@@ -6,7 +6,7 @@ WITH yearly_sales AS (
     SELECT
         sales.sales_year,
         books.ISBN,
-        books.book_title,
+        books.book_title as title,
         COALESCE(SUM(sales.sales_value), 0) AS total_revenue,
         COALESCE(SUM(sales.volume_sold), 0) AS total_books_sold
     FROM {{ ref('int_books') }} AS books
