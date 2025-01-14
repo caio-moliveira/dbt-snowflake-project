@@ -4,16 +4,17 @@
 
 WITH top_books_by_publisher AS (
     SELECT
-        books.publisher_group AS publisher_name,
+        authors.publisher_group AS publisher_name,
         books.ISBN,
-        books.title,
+        books.book_title,
         COALESCE(SUM(sales.sales_value), 0) AS total_revenue,
-        COALESCE(SUM(sales.sales_volume), 0) AS total_books_sold,
-        CURRENT_TIMESTAMP AS load_timestamp
-    FROM {{ ref('int_books') }} AS books
+        COALESCE(SUM(sales.volume_sold), 0) AS total_books_sold
+    FROM {{ ref('int_authors') }} AS authors
+    LEFT JOIN {{ ref('int_books') }} AS books
+        ON authors.author_name = books.book_author
     LEFT JOIN {{ ref('int_sales') }} AS sales
         ON books.ISBN = sales.ISBN
-    GROUP BY books.publisher_group, books.ISBN, books.title
+    GROUP BY authors.publisher_group, books.ISBN, books.book_title
 )
 
 SELECT *

@@ -8,6 +8,7 @@ WITH deduplicated_books AS (
     SELECT DISTINCT
         ISBN,
         Title AS book_title,
+        Author AS book_author,
         Volume AS volume_sold,
         Binding AS binding,
         Publ_Date AS publish_date,
