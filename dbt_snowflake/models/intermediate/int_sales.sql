@@ -26,4 +26,4 @@ SELECT
     recommended_retail_price,
     average_selling_price
 FROM deduplicated_sales
-ORDER BY ISBN, sales_year;
+ORDER BY ISBN, sales_year

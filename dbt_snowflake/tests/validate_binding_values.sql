@@ -7,4 +7,4 @@ WITH invalid_binding AS (
 )
 
 SELECT *
-FROM invalid_binding;
+FROM invalid_binding

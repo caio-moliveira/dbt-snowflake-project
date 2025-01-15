@@ -13,9 +13,9 @@ WITH deduplicated_books AS (
         Publ_Date AS publish_date,
         Product_Class AS product_class
     FROM {{ source('dbt_staging', 'stg_raw_books') }}
-    WHERE ISBN IS NOT NULL
 )
 
 SELECT *
 FROM deduplicated_books
+WHERE book_author IS NOT NULL
 ORDER BY ISBN

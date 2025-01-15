@@ -6,7 +6,6 @@
 WITH deduplicated_google_books AS (
     SELECT DISTINCT
         ISBN,
-        Sales_Year as sales_year,
         GB_Title AS gb_title,
         GB_Author AS gb_author,
         GB_Desc AS gb_desc,

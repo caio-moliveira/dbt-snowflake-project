@@ -18,3 +18,4 @@ WITH genres_data AS (
 
 SELECT *
 FROM genres_data
+WHERE genre IS NOT NULL

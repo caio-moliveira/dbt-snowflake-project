@@ -5,4 +5,4 @@ WITH invalid_years AS (
   WHERE Sales_Year NOT BETWEEN 2000 AND 2100
 )
 SELECT *
-FROM invalid_years;
+FROM invalid_years
