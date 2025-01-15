@@ -2,7 +2,7 @@
     materialized='table'
 ) }}
 
-WITH author_sales AS (
+WITH publisher_sales AS (
     SELECT
         authors.publisher_group,
         ROUND(authors.avg_rating, 2) AS avg_rating,
@@ -18,7 +18,7 @@ WITH author_sales AS (
         authors.publisher_group,
         authors.avg_rating
 ),
-ranked_authors AS (
+ranked_publisher AS (
     SELECT
         publisher_group,
         avg_rating,
@@ -28,7 +28,7 @@ ranked_authors AS (
             PARTITION BY publisher_group
             ORDER BY total_revenue DESC
         ) AS rank
-    FROM author_sales
+    FROM publisher_sales
 )
 
 SELECT
@@ -36,7 +36,7 @@ SELECT
     avg_rating,
     total_revenue,
     total_books_sold
-FROM ranked_authors
+FROM ranked_publisher
 WHERE rank = 1
 ORDER BY total_revenue DESC
 LIMIT 50

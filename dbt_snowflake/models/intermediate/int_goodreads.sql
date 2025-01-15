@@ -6,6 +6,7 @@
 WITH deduplicated_goodreads AS (
     SELECT DISTINCT
         ISBN,
+        Sales_Year as sales_year,
         GR_Title AS gr_title,
         GR_Author AS gr_author,
         GR_Rating AS gr_rating,

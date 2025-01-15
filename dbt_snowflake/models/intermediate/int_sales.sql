@@ -16,6 +16,14 @@ WITH deduplicated_sales AS (
     WHERE ISBN IS NOT NULL
 )
 
-SELECT *
+SELECT
+    ROW_NUMBER() OVER (ORDER BY ISBN, sales_year, position) AS sales_id,
+    ISBN,
+    sales_year,
+    position,
+    volume_sold,
+    sales_value,
+    recommended_retail_price,
+    average_selling_price
 FROM deduplicated_sales
-ORDER BY ISBN, sales_year
+ORDER BY ISBN, sales_year;

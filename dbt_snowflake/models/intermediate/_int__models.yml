@@ -1,8 +1,14 @@
 version: 2
 
 models:
-  - name: int_author
+  - name: int_authors
     description: "Intermediate layer for authors data, linking authors to publisher groups."
+    tags:
+      - intermediate
+      - authors
+    meta:
+      owner: "data_team"
+      sla: "Data updated daily at 6 AM"
     columns:
       - name: author_id
         description: "Unique numeric ID assigned to each author."
@@ -15,63 +21,117 @@ models:
           - not_null
       - name: publisher_group
         description: "The publisher group associated with the author."
+        tests:
+          - not_null
+      - name: avg_rating
+        description: "Average Goodreads rating for the author's books."
+        tests:
+          - accepted_range:
+              min_value: 0
+              max_value: 5
 
   - name: int_books
     description: "Intermediate layer for books data, consolidating metadata from various sources."
+    tags:
+      - intermediate
+      - books
+    meta:
+      owner: "data_team"
+      sla: "Data updated daily at 6 AM"
     columns:
       - name: ISBN
         description: "Primary key for books, uniquely identifying each book."
         tests:
           - unique
           - not_null
-      - name: title
+      - name: book_title
         description: "Title of the book."
-      - name: author
+        tests:
+          - not_null
+      - name: book_author
         description: "Author of the book."
-      - name: publication_date
-        description: "Date the book was published."
-      - name: publisher
-        description: "Publisher of the book."
+        tests:
+          - not_null
+      - name: binding
+        description: "The binding type of the book (e.g., 'Paperback', 'Hardback')."
+        tests:
+          - validate_binding_values
+      - name: publish_date
+        description: "Date when the book was published."
+      - name: product_class
+        description: "The product classification category for the book."
 
   - name: int_goodreads
     description: "Intermediate layer for Goodreads data, including ratings and additional metadata."
+    tags:
+      - intermediate
+      - goodreads
+    meta:
+      owner: "data_team"
+      sla: "Data updated daily at 6 AM"
     columns:
-      - name: goodreads_id
-        description: "Unique identifier for Goodreads records."
-        tests:
-          - unique
-          - not_null
       - name: ISBN
         description: "Foreign key linking to books table."
         tests:
           - not_null
-      - name: rating
+          - unique
+      - name: sales_year
+        description: "Year of the sale."
+        tests:
+          - not_null
+      - name: gr_title
+        description: "Title of the book on Goodreads."
+      - name: gr_author
+        description: "Author of the book on Goodreads."
+      - name: gr_rating
         description: "Average Goodreads rating for the book."
-      - name: pages
-        description: "Number of pages in the book."
+        tests:
+          - accepted_range:
+              min_value: 0
+              max_value: 5
+      - name: gr_pages
+        description: "Number of pages in the book according to Goodreads."
 
   - name: int_google_books
     description: "Intermediate layer for Google Books data, providing supplementary book metadata."
+    tags:
+      - intermediate
+      - google_books
+    meta:
+      owner: "data_team"
+      sla: "Data updated daily at 6 AM"
     columns:
-      - name: google_books_id
-        description: "Unique identifier for Google Books records."
-        tests:
-          - unique
-          - not_null
       - name: ISBN
         description: "Foreign key linking to books table."
         tests:
           - not_null
-      - name: description
+          - unique
+      - name: sales_year
+        description: "Year of the sale."
+        tests:
+          - not_null
+      - name: gb_title
+        description: "Title of the book on Google Books."
+      - name: gb_author
+        description: "Author of the book on Google Books."
+      - name: gb_desc
         description: "A brief description of the book from Google Books."
-      - name: categories
-        description: "Categories assigned to the book in Google Books."
+      - name: gb_genre
+        description: "Genre assigned to the book in Google Books."
+      - name: gb_pages
+        description: "Number of pages in the book according to Google Books."
 
   - name: int_sales
     description: "Intermediate layer for sales data, linking sales records to books by ISBN."
+    tags:
+      - intermediate
+      - sales
+    meta:
+      owner: "data_team"
+      sla: "Data updated daily at 6 AM"
     columns:
-      - name: sale_id
-        description: "Unique identifier for each sale record."
+      - name: sales_id
+        description: "Unique identifier for each sales record."
         tests:
           - unique
           - not_null
@@ -79,7 +139,29 @@ models:
         description: "Foreign key linking sales to books."
         tests:
           - not_null
-      - name: quantity
+      - name: sales_year
+        description: "Year of the sale."
+        tests:
+          - not_null
+      - name: position
+        description: "Rank or position of the book in the sales chart."
+      - name: volume_sold
         description: "Number of books sold in this record."
-      - name: sale_date
-        description: "Date of the sale."
+        tests:
+          - not_null
+          - accepted_range:
+              min_value: 0
+      - name: sales_value
+        description: "Total revenue generated by the sales."
+        tests:
+          - not_null
+          - accepted_range:
+              min_value: 0
+      - name: recommended_retail_price
+        description: "Recommended retail price of the book."
+        tests:
+          - test_non_negative_prices
+      - name: average_selling_price
+        description: "Average selling price of the book."
+        tests:
+          - test_non_negative_prices
