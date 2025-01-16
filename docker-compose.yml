@@ -1,4 +1,3 @@
-services:
   streamlit:
     build:
       context: ./app
