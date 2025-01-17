@@ -1,6 +1,5 @@
 from airflow import DAG
 from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
-from airflow.operators.bash import BashOperator
 from datetime import datetime, timedelta
 
 # DAG definition
@@ -8,8 +7,9 @@ default_args = {
     "owner": "airflow",
     "depends_on_past": False,
     "start_date": datetime(2025, 1, 8),
-    "email_on_failure": False,
-    "email_on_retry": False,
+    "email": ["moliveiracaio@gmail.com"],  # Add email for notifications
+    "email_on_failure": True,  # Enable email notifications on failure
+    "email_on_retry": True,  # Enable email notifications on retries
     "retries": 1,
     "retry_delay": timedelta(minutes=2),
 }
@@ -26,10 +26,6 @@ with DAG(
     default_args=default_args,
     description="Orchestrate dbt workflows when new files are dropped in S3 and process multiple files",
     schedule_interval=None,  # Trigger manually or event-based
-    email=["moliveiracaio@gmail.com"],
-    email_on_failure=True,
-    email_on_retry=True,
-    start_date=datetime(2025, 1, 1),
     catchup=False,
 ) as dag:
     # Task 1: Wait for a new file in S3
@@ -39,28 +35,9 @@ with DAG(
         bucket_key=f"{S3_PREFIX}*",
         aws_conn_id=AWS_CONN_ID,
         wildcard_match=True,  # Enable wildcard matching to detect any file under the prefix
-        timeout=None,  # Timeout after 10 minutes
         poke_interval=30,
         mode="reschedule",  # Check every 30 seconds
     )
 
-    # Task 3: Run dbt transformations
-    dbt_run = BashOperator(
-        task_id="dbt_run",
-        bash_command="dbt run --profiles-dir /usr/local/airflow/dbt_snowflake --project-dir /usr/local/airflow/dbt_snowflake",
-    )
-
-    # Task 4: Run dbt tests
-    dbt_test = BashOperator(
-        task_id="dbt_test",
-        bash_command="dbt test --profiles-dir /usr/local/airflow/dbt_snowflake --project-dir /usr/local/airflow/dbt_snowflake",
-    )
-
-    # Task 5: Run dbt snapshots
-    dbt_snapshot = BashOperator(
-        task_id="dbt_snapshot",
-        bash_command="dbt snapshot --profiles-dir /usr/local/airflow/dbt_snowflake --project-dir /usr/local/airflow/dbt_snowflake",
-    )
-
     # Define task dependencies
-    s3_sensor >> dbt_run >> dbt_test >> dbt_snapshot
+    s3_sensor

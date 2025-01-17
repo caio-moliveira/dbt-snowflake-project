@@ -1,7 +1,8 @@
-apache-airflow-providers-snowflake==6.0.0
+apache-airflow
+apache-airflow-providers-amazon
+apache-airflow-providers-snowflake
 astro-sdk-python[amazon,snowflake]
 astronomer-cosmos[dbt.snowflake]
-dbt-snowflake
 loguru
 pandas
 pre-commit
