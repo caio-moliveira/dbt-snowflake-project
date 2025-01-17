@@ -26,6 +26,9 @@ with DAG(
     default_args=default_args,
     description="Orchestrate dbt workflows when new files are dropped in S3 and process multiple files",
     schedule_interval=None,  # Trigger manually or event-based
+    email=["moliveiracaio@gmail.com"],
+    email_on_failure=True,
+    email_on_retry=True,
     start_date=datetime(2025, 1, 1),
     catchup=False,
 ) as dag:
@@ -36,8 +39,9 @@ with DAG(
         bucket_key=f"{S3_PREFIX}*",
         aws_conn_id=AWS_CONN_ID,
         wildcard_match=True,  # Enable wildcard matching to detect any file under the prefix
-        timeout=600,  # Timeout after 10 minutes
-        poke_interval=30,  # Check every 30 seconds
+        timeout=None,  # Timeout after 10 minutes
+        poke_interval=30,
+        mode="reschedule",  # Check every 30 seconds
     )
 
     # Task 3: Run dbt transformations
