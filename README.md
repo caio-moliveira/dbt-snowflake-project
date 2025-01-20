@@ -145,6 +145,101 @@ FILE_FORMAT = (FORMAT_NAME = 'DBT_PROJECT.FILE_FORMATS.my_csv_format')
 match_by_column_name=case_insensitive;
 ```
 
+
+
+
+3. Set IAM enviroment for Snowpipe:  
+https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3
+
+Follow this documentation to set your bucket in order to automate the pipeline. 
+
+1. Run Airflow:
+Check if files like Dockerfile, requirements.txt, docker-compose-override.yml exists. if yes, you are ready to run: 
+```bash
+Astro dev start
+```
+
+## Step 2: Set Up Airflow Connections
+
+In the Airflow UI, configure the necessary connections to integrate AWS S3 and Snowflake.
+
+### **AWS S3 Connection**
+1. Navigate to **Admin > Connections** in the Airflow UI.
+2. Create a new connection with the following details:
+   - **Conn Id**: `aws_s3`
+   - **Conn Type**: `Amazon Web Services`
+   - **Access Key**: Your AWS Access Key
+   - **Secret Key**: Your AWS Secret Key
+
+### **Snowflake Connection**
+1. Navigate to **Admin > Connections** in the Airflow UI.
+2. Create a new connection with the following details:
+   - **Conn Id**: `snowflake_default`
+   - **Conn Type**: `Snowflake`
+   - **Account**: Snowflake account identifier
+   - **Username**: Your Snowflake username
+   - **Password**: Your Snowflake password
+   - **Database**: Your database name
+   - **Schema**: Default schema (optional)
+
+---
+
+## Step 3: Define Airflow DAG
+
+Write a DAG script in Python to monitor the S3 bucket and trigger transformations.
+
+### **Key Components of the DAG**
+1. **S3KeySensor**
+   - Detects new files in the specified S3 bucket.
+```python
+# Task 1: S3KeySensor to wait for any .csv file in the S3 folder
+s3_sensor = S3KeySensor(
+    task_id="s3-sensor",
+    bucket_name=S3_BUCKET,  # Your S3 bucket name
+    bucket_key=S3_PREFIX,  # Wildcard to match any .csv file
+    aws_conn_id="aws_default",  # AWS connection set up in Airflow
+    wildcard_match=True,
+    poke_interval=30,  # Check every 30 seconds
+    timeout=60 * 60 * 6,  # Timeout after 6 hours
+    dag=dag,
+)
+```
+
+2. **BashOperator**
+   - Executes the `dbt run` command to perform data transformations.
+```python
+# Configure the ProfileConfig for dbt
+profile_config = ProfileConfig(
+    profile_name="dbt_snowflake",
+    target_name="dev",
+    profile_mapping=SnowflakeUserPasswordProfileMapping(
+        conn_id="Snowflake",
+        profile_args={
+            "database": "dbt_project",
+            "schema": "dbt",
+            "warehouse": "dbt_wh",
+        },
+    ),
+)
+
+# Define Cosmos DbtDag
+cosmos_dbt_dag = DbtDag(
+    dag_id="cosmos_dbt_dag",
+    project_config=ProjectConfig(dbt_project_path),
+    operator_args={"install_deps": True},
+    profile_config=profile_config,
+    execution_config=ExecutionConfig(
+        dbt_executable_path="/usr/local/bin/dbt",
+    ),
+)
+```
+
+### **Workflow Overview**
+1. Wait for a new file to be uploaded to the S3 bucket.
+2. Trigger the DBT transformation process.
+
+By setting up these connections and defining the DAG, Airflow will automate the ingestion and transformation steps of your data pipeline.
+
 1. Clone the repository:  
    ```bash
     ```
