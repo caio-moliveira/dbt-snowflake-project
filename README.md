@@ -78,14 +78,17 @@ USE ROLE ACCOUNTADMIN;
 -- Step 1: Create the dbt_transform role 
 CREATE OR REPLACE ROLE dbt_role;
 GRANT ROLE dbt_role TO ROLE ACCOUNTADMIN;
+```
 
+``` sql 
 -- Step 2: Create the warehouse
 CREATE WAREHOUSE IF NOT EXISTS DBT_WH
   WITH WAREHOUSE_SIZE = 'X-SMALL'
   MAX_CLUSTER_COUNT = 3
   AUTO_SUSPEND = 300 -- Seconds
   COMMENT = 'This is a warehouse for development and testing';
-
+```
+```sql
 -- Step 3: Create the dbt_user and assign it to the role
 CREATE USER IF NOT EXISTS dbt_user
     PASSWORD = 'your-password' 
@@ -96,13 +99,13 @@ CREATE USER IF NOT EXISTS dbt_user
     COMMENT = 'dbt user for operations and data transformation';
 
 GRANT ROLE dbt_role TO USER dbt_user;
-
+```
+```sql 
 -- Step 4: Create the database and schemas
 CREATE OR REPLACE DATABASE DBT_PROJECT;
-
 CREATE OR REPLACE SCHEMA DBT_PROJECT.DBT_STAGING;
-
-
+```
+```sql 
 -- Create a storage integration for S3
 CREATE OR REPLACE STORAGE INTEGRATION s3_project_integration
   TYPE = EXTERNAL_STAGE
@@ -112,66 +115,37 @@ CREATE OR REPLACE STORAGE INTEGRATION s3_project_integration
   STORAGE_ALLOWED_LOCATIONS = ('s3://your-bucket-name/')
   COMMENT = 'Integration for S3 bucket with CSV files';
 
--- Describe the integration to confirm setup
+-- Describe the integration to confirm setup - You will need to take an ID to use when Setting the IAM Policies
 DESC INTEGRATION s3_project_integration;
-
-
+```
+``` sql
 CREATE OR REPLACE FILE FORMAT DBT_PROJECT.FILE_FORMATS.my_csv_format
 TYPE = 'CSV'
 FIELD_OPTIONALLY_ENCLOSED_BY = '"'      
 NULL_IF = ('NULL', 'N/A')           
 FIELD_DELIMITER = ','
-PARSE_HEADER = TRUE;   
+PARSE_HEADER = TRUE;
 
-
-
+```
+``` sql
 -- Recreate in the correct schema
 CREATE OR REPLACE STAGE DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage
   URL = 's3://your-bucket-name/'
   STORAGE_INTEGRATION = s3_project_integration
   FILE_FORMAT = DBT_PROJECT.FILE_FORMATS.my_csv_format;
-
-   ```
+```
 
 
 1. Creating SnowPipe:  
-   ``` sql
-
-   CREATE OR REPLACE TABLE DBT_PROJECT.DBT_STAGING.stg_raw_books (
-    ISBN INT,
-    Sales_Year INT,
-    Position INT,
-    Title STRING,
-    Author STRING,
-    Imprint STRING,
-    Publisher_Group STRING,
-    Volume INT,
-    Value DECIMAL(10,2),
-    RRP DECIMAL(10,2),
-    ASP DECIMAL(10,2),
-    Binding STRING,
-    Publ_Date STRING,
-    Product_Class STRING,
-    GR_Title STRING,
-    GR_Author STRING,
-    GR_Rating DECIMAL(10,2),
-    GR_Pages INT,
-    GB_Title STRING,
-    GB_Author STRING,
-    GB_Desc STRING,
-    GB_Pages INT,
-    GB_Genre STRING
-);
-
-
+``` sql
 CREATE OR REPLACE PIPE DBT_PROJECT.DBT_STAGING.snowpipe_books AUTO_INGEST=TRUE
 AS
 COPY INTO DBT_PROJECT.DBT_STAGING.stg_raw_books
 FROM @DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage
 FILE_FORMAT = (FORMAT_NAME = 'DBT_PROJECT.FILE_FORMATS.my_csv_format')
 match_by_column_name=case_insensitive;
+```
 
-    ```
 1. Clone the repository:  
    ```bash
     ```
