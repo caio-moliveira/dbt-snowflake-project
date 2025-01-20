@@ -11,14 +11,10 @@ This project implements a data pipeline that integrates AWS S3, Snowflake, DBT, 
 1. [Project Overview](#project-overview)  
 2. [Pipeline Workflow](#pipeline-workflow)  
 3. [Technologies Used](#technologies-used)  
-4. [Installation](#installation)  
-5. [Usage](#usage)  
-6. [Features](#features)  
-7. [Pipeline Components](#pipeline-components)  
-8. [Configuration](#configuration)  
-9. [Troubleshooting](#troubleshooting)  
-10. [Contributors](#contributors)  
-11. [License](#license)  
+4. [Setting Enviroment](#installation)  
+5. [Features](#features)  
+6. [Troubleshooting](#troubleshooting)  
+
 
 ---
 
@@ -60,16 +56,16 @@ This project automates the end-to-end process of data ingestion, transformation,
 
 ---
 
-# Setting Enviroment
+## Setting Enviroment
 
-## Step 1: Clone the repository:  
+### Step 1: Clone the repository:  
 ```bash
 mkdir dbt-snowflake-project
 git clone https://github.com/caio-moliveira/dbt-snowflake-project.git
 cd dbt-snowflake-project 
 ```
 
-## Step 2: Set up Snowflake enviroment: 
+### Step 2: Set up Snowflake enviroment: 
 ``` sql
 -- Switch to the ACCOUNTADMIN role to perform setup
 USE ROLE ACCOUNTADMIN;
@@ -135,7 +131,7 @@ CREATE OR REPLACE STAGE DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage
 ```
 
 
-## Step 3: Set up SnowPipe:
+### Step 3: Set up SnowPipe:
 ``` sql
 CREATE OR REPLACE PIPE DBT_PROJECT.DBT_STAGING.snowpipe_books AUTO_INGEST=TRUE
 AS
@@ -148,13 +144,13 @@ match_by_column_name=case_insensitive;
 
 
  
-## Step 4: Set up IAM for Snowpipe:
-https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3
+### Step 4: Set up IAM for Snowpipe:
+(Setting Snowpipe)[https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3]
 
 Follow this documentation to set your bucket in order to automate the pipeline. 
 
 
-## Step 5: Set Up Airflow Connections
+### Step 5: Set Up Airflow Connections
 
 Check if files like Dockerfile, requirements.txt, docker-compose-override.yml exists. if yes, you are ready to run: 
 ```bash
@@ -163,7 +159,7 @@ Astro dev start
 
 In the Airflow UI, configure the necessary connections to integrate AWS S3 and Snowflake.
 
-### **AWS S3 Connection**
+#### **AWS S3 Connection**
 1. Navigate to **Admin > Connections** in the Airflow UI.
 2. Create a new connection with the following details:
    - **Conn Id**: `aws_s3`
@@ -171,7 +167,7 @@ In the Airflow UI, configure the necessary connections to integrate AWS S3 and S
    - **Access Key**: Your AWS Access Key
    - **Secret Key**: Your AWS Secret Key
 
-### **Snowflake Connection**
+#### **Snowflake Connection**
 1. Navigate to **Admin > Connections** in the Airflow UI.
 2. Create a new connection with the following details:
    - **Conn Id**: `snowflake_default`
@@ -184,11 +180,11 @@ In the Airflow UI, configure the necessary connections to integrate AWS S3 and S
 
 ---
 
-## Step 6: Define Airflow DAG:
+### Step 6: Define Airflow DAG:
 
 Write a DAG script in Python to monitor the S3 bucket and trigger transformations.
 
-### **Key Components of the DAG**
+#### **Key Components of the DAG**
 1. **S3KeySensor**
    - Detects new files in the specified S3 bucket.
 ```python
@@ -234,20 +230,11 @@ cosmos_dbt_dag = DbtDag(
 )
 ```
 
-### **Workflow Overview**
+#### **Workflow Overview**
 1. Wait for a new file to be uploaded to the S3 bucket.
 2. Trigger the DBT transformation process.
 
 By setting up these connections and defining the DAG, Airflow will automate the ingestion and transformation steps of your data pipeline.
-
-
-
-## Usage
-
-1. **File Upload**: Drop a file into the S3 bucket.  
-2. **Trigger Workflow**: The S3 upload triggers `snowpipe` and Airflow automation.  
-3. **Run Transformations**: DBT organizes and transforms the data into Snowflake schemas.  
-4. **Analyze Data**: Access the Streamlit web application to view analysis and insights.
 
 ---
 
@@ -257,43 +244,6 @@ By setting up these connections and defining the DAG, Airflow will automate the 
 - Transformation of data into organized schemas (`Raw`, `Intermediate`, `Marts`).  
 - Scheduled workflows using Airflow.  
 - Real-time data analysis via Streamlit dashboards.
-
----
-
-## Pipeline Components
-
-### 1. S3 Bucket and Snowpipe
-
-Snowpipe automatically ingests files uploaded to the S3 bucket and stages them in the `Raw` schema within Snowflake.
-
-### 2. Airflow DAG
-
-Airflow detects new files in the S3 bucket and triggers DBT to process the raw data.
-
-### 3. DBT Models
-
-DBT organizes and transforms data into `Intermediate` and `Marts` schemas in Snowflake.
-
-### 4. Streamlit Application
-
-The Streamlit application fetches data from the `Marts` schema to visualize results and insights.
-
----
-
-## Configuration
-
-### AWS S3 and Snowflake
-- Configure AWS S3 bucket permissions and triggers.  
-- Set up Snowflake stages and pipes to automate ingestion.
-
-### Airflow
-- Define DAGs and tasks to monitor S3 and execute DBT commands.
-
-### DBT
-- Configure `profiles.yml` with Snowflake credentials for transformations.
-
-### Streamlit
-- Update Snowflake connection settings in the application for seamless integration.
 
 ---
 
