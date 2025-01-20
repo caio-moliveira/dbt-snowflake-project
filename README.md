@@ -31,7 +31,7 @@ This project automates the end-to-end process of data ingestion, transformation,
 
 ### Archtecture
 
-(Archtecture)[https://excalidraw.com/#json=nJjkrGuButesLTE7So6to,iYzXOxXiySXr9PXQzvHq3Q]
+[Archtecture](https://excalidraw.com/#json=nJjkrGuButesLTE7So6to,iYzXOxXiySXr9PXQzvHq3Q)
 
 1. **S3 File Upload**  
    - Files are uploaded to an AWS S3 bucket.  
