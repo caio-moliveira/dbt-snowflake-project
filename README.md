@@ -70,8 +70,7 @@ This project automates the end-to-end process of data ingestion, transformation,
     ```
 
 1. Set Snowflake Enviroment:  
-   ``` sql
-
+``` sql
 -- Switch to the ACCOUNTADMIN role to perform setup
 USE ROLE ACCOUNTADMIN;
 
