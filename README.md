@@ -118,8 +118,8 @@ DESC INTEGRATION s3_project_integration;
 
 CREATE OR REPLACE FILE FORMAT DBT_PROJECT.FILE_FORMATS.my_csv_format
 TYPE = 'CSV'
-FIELD_OPTIONALLY_ENCLOSED_BY = '"'  -- Handle fields enclosed in quotes                     -- Skip the header row
-NULL_IF = ('NULL', 'N/A')           -- Treat 'NULL' and 'N/A' as NULL
+FIELD_OPTIONALLY_ENCLOSED_BY = '"'      
+NULL_IF = ('NULL', 'N/A')           
 FIELD_DELIMITER = ','
 PARSE_HEADER = TRUE;   
 
@@ -131,11 +131,12 @@ CREATE OR REPLACE STAGE DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage
   STORAGE_INTEGRATION = s3_project_integration
   FILE_FORMAT = DBT_PROJECT.FILE_FORMATS.my_csv_format;
 
-```
+   ```
 
 
 1. Creating SnowPipe:  
-   ```sql
+   ``` sql
+
    CREATE OR REPLACE TABLE DBT_PROJECT.DBT_STAGING.stg_raw_books (
     ISBN INT,
     Sales_Year INT,
@@ -169,6 +170,7 @@ COPY INTO DBT_PROJECT.DBT_STAGING.stg_raw_books
 FROM @DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage
 FILE_FORMAT = (FORMAT_NAME = 'DBT_PROJECT.FILE_FORMATS.my_csv_format')
 match_by_column_name=case_insensitive;
+
     ```
 1. Clone the repository:  
    ```bash
