@@ -60,16 +60,16 @@ This project automates the end-to-end process of data ingestion, transformation,
 
 ---
 
-## Setting Enviroment
+# Setting Enviroment
 
-1. Clone the repository:  
-   ```bash
-   mkdir dbt-snowflake-project
-   git clone https://github.com/caio-moliveira/dbt-snowflake-project.git
-   cd dbt-snowflake-project 
-    ```
+## Step 1: Clone the repository:  
+```bash
+mkdir dbt-snowflake-project
+git clone https://github.com/caio-moliveira/dbt-snowflake-project.git
+cd dbt-snowflake-project 
+```
 
-1. Set Snowflake Enviroment:  
+## Step 2: Set up Snowflake enviroment: 
 ``` sql
 -- Switch to the ACCOUNTADMIN role to perform setup
 USE ROLE ACCOUNTADMIN;
@@ -135,7 +135,7 @@ CREATE OR REPLACE STAGE DBT_PROJECT.EXTERNAL_STAGES.s3_books_stage
 ```
 
 
-1. Creating SnowPipe:  
+## Step 3: Set up SnowPipe:
 ``` sql
 CREATE OR REPLACE PIPE DBT_PROJECT.DBT_STAGING.snowpipe_books AUTO_INGEST=TRUE
 AS
@@ -147,19 +147,19 @@ match_by_column_name=case_insensitive;
 
 
 
-
-3. Set IAM enviroment for Snowpipe:  
+ 
+## Step 4: Set up IAM for Snowpipe:
 https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3
 
 Follow this documentation to set your bucket in order to automate the pipeline. 
 
-1. Run Airflow:
+
+## Step 5: Set Up Airflow Connections
+
 Check if files like Dockerfile, requirements.txt, docker-compose-override.yml exists. if yes, you are ready to run: 
 ```bash
 Astro dev start
 ```
-
-## Step 2: Set Up Airflow Connections
 
 In the Airflow UI, configure the necessary connections to integrate AWS S3 and Snowflake.
 
@@ -184,7 +184,7 @@ In the Airflow UI, configure the necessary connections to integrate AWS S3 and S
 
 ---
 
-## Step 3: Define Airflow DAG
+## Step 6: Define Airflow DAG:
 
 Write a DAG script in Python to monitor the S3 bucket and trigger transformations.
 
@@ -240,24 +240,6 @@ cosmos_dbt_dag = DbtDag(
 
 By setting up these connections and defining the DAG, Airflow will automate the ingestion and transformation steps of your data pipeline.
 
-1. Clone the repository:  
-   ```bash
-    ```
-1. Clone the repository:  
-   ```bash
-    ```
-1. Clone the repository:  
-   ```bash
-    ```
-1. Clone the repository:  
-   ```bash
-    ```
-1. Clone the repository:  
-   ```bash
-    ```
-1. Clone the repository:  
-   ```bash
-    ```
 
 
 ## Usage
